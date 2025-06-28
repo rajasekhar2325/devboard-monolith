@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>DevBoard Auth Demo</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    section { border: 1px solid #ddd; padding: 15px; margin-bottom: 20px; width: 500px; }
+    textarea { width: 100%; }
+    input { margin: 5px 0; width: 100%; padding: 5px; }
+    button { margin-top: 10px; padding: 5px 10px; }
+    h2 { margin-bottom: 5px; }
+  </style>
+</head>
+<body>
+
+  <section>
+    <h2>🔐 Register</h2>
+    <input type="text" id="regUser" placeholder="Username" />
+    <input type="password" id="regPass" placeholder="Password" />
+    <button onclick="register()">Register</button>
+    <p id="regMsg"></p>
+  </section>
+
+  <section>
+    <h2>🔑 Login</h2>
+    <input type="text" id="logUser" placeholder="Username" />
+    <input type="password" id="logPass" placeholder="Password" />
+    <button onclick="login()">Login</button>
+    <p id="loginMsg"></p>
+  </section>
+
+  <section>
+    <h2>🪪 JWT Token</h2>
+    <textarea id="token" rows="5" readonly></textarea>
+    <button onclick="logout()">Logout</button>
+  </section>
+
+  <section>
+    <h2>🧠 Decoded Token</h2>
+    <pre id="decoded"></pre>
+  </section>
+
+  <section>
+    <h2>🔒 Protected Route</h2>
+    <button onclick="accessProtected()">Call /protected</button>
+    <p id="protectedMsg"></p>
+  </section>
+
+  <script>
+    function decodeJWT(token) {
+      try {
+        const base64Url = token.split('.')[1];
+        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        const jsonPayload = decodeURIComponent(atob(base64).split('').map(function (c) {
+          return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+        }).join(''));
+        return JSON.stringify(JSON.parse(jsonPayload), null, 2);
+      } catch (e) {
+        return 'Invalid token';
+      }
+    }
+
+    async function register() {
+      const username = document.getElementById("regUser").value;
+      const password = document.getElementById("regPass").value;
+      const res = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password })
+      });
+      const msg = await res.json();
+      document.getElementById("regMsg").innerText = msg.msg || msg.error;
+    }
+
+    async function login() {
+      const username = document.getElementById("logUser").value;
+      const password = document.getElementById("logPass").value;
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password })
+      });
+      const data = await res.json();
+      if (data.token) {
+        document.getElementById("token").value = data.token;
+        document.getElementById("decoded").innerText = decodeJWT(data.token);
+        document.getElementById("loginMsg").innerText = "Login successful!";
+      } else {
+        document.getElementById("loginMsg").innerText = data.error;
+      }
+    }
+
+    function logout() {
+      document.getElementById("token").value = '';
+      document.getElementById("decoded").innerText = '';
+      document.getElementById("loginMsg").innerText = 'Logged out';
+    }
+
+    async function accessProtected() {
+      const token = document.getElementById("token").value;
+      if (!token) return alert("Please login first");
+
+      const res = await fetch("/api/protected", {
+        headers: { Authorization: "Bearer " + token }
+      });
+      const data = await res.text();
+      document.getElementById("protectedMsg").innerText = data;
+    }
+  </script>
+
+</body>
+</html>
