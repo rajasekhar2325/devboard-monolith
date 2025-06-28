@@ -1,0 +1,30 @@
+Folders
+
+[ public/ ]          --> Frontend UI (HTML, CSS, JS)
+[ routes/ ]          --> API endpoint definitions
+[ controllers/ ]     --> API business logic
+[ models/ ]          --> Database schema & DB access
+[ middleware/ ]      --> Token checkers, validators
+
+User login api flow
+
+[ Browser (frontend) ]
+      |
+      |  (POST /api/auth/login)
+      V
+[ routes/auth.js ]
+      |
+      |  calls
+      V
+[ controllers/authController.js ]
+      |
+      |  uses
+      V
+[ models/User.js ] ---> [ MongoDB ]
+      |
+      |  returns result
+      V
+[ authController sends response ]
+      |
+      V
+[ Frontend shows success/failure message ]

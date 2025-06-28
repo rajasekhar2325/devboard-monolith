@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Auth + Boards</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <!-- Register -->
+  <section>
+    <h2>🔐 Register</h2>
+    <input type="text" id="regUser" placeholder="Username" />
+    <input type="password" id="regPass" placeholder="Password" />
+    <button onclick="register()">Register</button>
+    <p id="regMsg"></p>
+  </section>
+
+  <!-- Login -->
+  <section>
+    <h2>🔑 Login</h2>
+    <input type="text" id="logUser" placeholder="Username" />
+    <input type="password" id="logPass" placeholder="Password" />
+    <button onclick="login()">Login</button>
+    <p id="loginMsg"></p>
+  </section>
+
+  <!-- JWT Token -->
+  <section>
+    <h2>🪪 JWT Token</h2>
+    <textarea id="token" rows="4" readonly></textarea>
+    <button onclick="logout()">Logout</button>
+  </section>
+
+  <!-- Boards -->
+  <section>
+    <h2>📋 Boards</h2>
+    <input type="text" id="boardTitle" placeholder="Board title" />
+    <button onclick="createBoard()">Create Board</button>
+    <ul id="boardList"></ul>
+  </section>
+
+  <script src="js/script.js"></script>
+</body>
+</html>
